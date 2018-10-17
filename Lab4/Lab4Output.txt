@@ -1,0 +1,92 @@
+
+STUDENTI FIRSTNAME            LASTNAME                    AVGGRADE
+-------- -------------------- ------------------------- ----------
+20315011 Nathaniel            Wihardjo                       91.18
+26186666 Warren               Buffet                          88.2
+13556789 Legolas              Greenleaf                       87.1
+
+
+*** REFERENTIAL INTEGRITY CONSTRAINTS VIOLATED ***
+
+
+Error starting at line : 24 in command -
+insert into Student values ('22222222', '*** Student ***', 'RI: No matching dept id', 'afong', '22223334', 0.00, 'PHYS', '2016')
+Error report -
+ORA-02291: integrity constraint (COMP3311STU078.SYS_C00253914) violated - parent key not found
+
+
+Error starting at line : 26 in command -
+insert into Student values ('33333333', '*** Student ***', 'RI: Dept id cannot be null', 'jchan', '23321334', 0.00, null, '2016')
+Error report -
+ORA-12899: value too large for column "COMP3311STU078"."STUDENT"."LASTNAME" (actual: 26, maximum: 25)
+
+
+*** Cascade delete test on Student table should succeed with 1 row deleted and no rows selected ***
+
+
+0 rows deleted.
+
+no rows selected
+
+Error starting at line : 36 in command -
+insert into Course values ('PHYS4311', '*** ', '*** Course ***', 'RI: No matching dept id')
+Error report -
+ORA-02291: integrity constraint (COMP3311STU078.SYS_C00253915) violated - parent key not found
+
+
+Error starting at line : 40 in command -
+insert into Facility values ('CHEM', '*** Facility *** RI: No matching dept id', 2, 5)
+Error report -
+ORA-02291: integrity constraint (COMP3311STU078.SYS_C00253916) violated - parent key not found
+
+
+Error starting at line : 44 in command -
+insert into EnrollsIn values ('13456789', 'PHYS4311', 80.6)
+Error report -
+ORA-02291: integrity constraint (COMP3311STU078.SYS_C00253917) violated - parent key not found
+
+
+Error starting at line : 46 in command -
+insert into EnrollsIn values ('99999999', 'COMP3311', 75.6)
+Error report -
+ORA-02291: integrity constraint (COMP3311STU078.SYS_C00253918) violated - parent key not found
+
+
+*** CHECK CONSTRAINTS VIOLATED ***
+
+
+Error starting at line : 55 in command -
+insert into Department values ('DEPT','*** Department table: Dept id invalid','0000')
+Error report -
+ORA-02290: check constraint (COMP3311STU078.CHK_DEPARTMENTID) violated
+
+
+Error starting at line : 58 in command -
+insert into Student values ('44444444', '*** Student table:', 'CHK: Email not unique', 'cs_grande', '22223334', 0.00, 'COMP', '2016')
+Error report -
+ORA-00001: unique constraint (COMP3311STU078.CHK_EMAIL) violated
+
+
+Error starting at line : 61 in command -
+insert into Student values ('234567*9', '*** Student table:', 'CHK: Student id invalid', 'afong', '22223334', 0.00, 'COMP', '2016')
+Error report -
+ORA-02290: check constraint (COMP3311STU078.CHK_STUDENTID) violated
+
+
+Error starting at line : 64 in command -
+insert into Student values ('55555555', '*** Student table:', 'CHK: CGA out of range', 'ali', '25524334', 4.50, 'COMP', '2016')
+Error report -
+ORA-02290: check constraint (COMP3311STU078.CHK_CGA) violated
+
+
+Error starting at line : 67 in command -
+insert into course values ('comp3311','COMP','** Course Table: CHK: invalid course id','Test Man')
+Error report -
+ORA-02290: check constraint (COMP3311STU078.CHK_COURSEID) violated
+
+
+Error starting at line : 70 in command -
+insert into EnrollsIn values ('99987654', 'COMP3311', 100.1)
+Error report -
+ORA-02290: check constraint (COMP3311STU078.CHK_GRADE) violated
+
