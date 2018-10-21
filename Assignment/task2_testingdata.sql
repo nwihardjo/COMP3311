@@ -12,7 +12,7 @@ create table temp(pid int);
 insert into temp values (1);
 insert into pers values (1, 10);
 insert into pers values (2, 10);
-insert into sub values (10, 1);
+insert into sub values (10, 1);    
 select * from temp;
 with combine (sid_, ref_pid, pid, ref_sid) as (
     select * from sub, pers 
@@ -20,6 +20,11 @@ with combine (sid_, ref_pid, pid, ref_sid) as (
 select *
 from combine c left outer join temp T on c.pid=T.pid
 where T.pid is not null;
+create table temp_ (pid int, num_ int);
+insert into temp_ (1, 3);
+insert into temp_ (1,3);
+insert into temp_ (2,1);
+select pid from temp_ where num_ = max(num_);
 --
 --
 

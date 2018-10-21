@@ -38,15 +38,6 @@ CREATE TABLE PCChair(
     CONSTRAINT pcc_fk FOREIGN KEY (pcCode) REFERENCES PCMember(pcCode) ON DELETE CASCADE
     );
     
-    
-CREATE TABLE Author(
-    personId        SMALLINT,   CONSTRAINT author_fk FOREIGN KEY (personId) REFERENCES Person(personId) ON DELETE CASCADE,
-    submissionNo    SMALLINT,
-    -- TODO : CHECK WHICH RELATION OF BELOW ATTRIBUTES (HASAUTHOR / HASCONTACT) OF DELETE
-    -- "EVERY AUTHOR HAS TO AT LEAST AUTHOR ONE"   
-    CONSTRAINT author_pk PRIMARY KEY (personid, submissionNo)
-    );
-
 
 CREATE TABLE Submission(
     submissionNo    INT,     
@@ -63,11 +54,17 @@ CREATE TABLE Submission(
     -- BELOW ATTRIBUTE FOR HASCONTACT
     -- TODO : CHECK WHETHER THE FOREIGN KEY CONSTRAINT IS CORRECT
     contactAuthor   SMALLINT, 
-    CONSTRAINT submission_fk FOREIGN KEY (contactAuthor, submissionNo) REFERENCES Author(personId, submissionNo) ON DELETE CASCADE 
+    CONSTRAINT submission_fk FOREIGN KEY (contactAuthor) REFERENCES Person(personId) ON DELETE CASCADE
     );
     
     
-ALTER TABLE Author ADD CONSTRAINT author_fk2 FOREIGN KEY (submissionNo) REFERENCES Submission(submissionNo) ON DELETE CASCADE;
+CREATE TABLE Author(
+    personId        SMALLINT,   CONSTRAINT author_fk FOREIGN KEY (personId) REFERENCES Person(personId) ON DELETE CASCADE,
+    submissionNo    SMALLINT,   CONSTRAINT author_fk2 FOREIGN KEY (submissionNo) REFERENCES Submission(submissionNo) ON DELETE CASCADE,
+    -- TODO : CHECK WHICH RELATION OF BELOW ATTRIBUTES (HASAUTHOR / HASCONTACT) OF DELETE
+    -- "EVERY AUTHOR HAS TO AT LEAST AUTHOR ONE"   
+    CONSTRAINT author_pk PRIMARY KEY (personid, submissionNo)
+    );    
 
 
 CREATE TABLE AssignedTo(
