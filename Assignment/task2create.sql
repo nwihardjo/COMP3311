@@ -17,12 +17,12 @@ drop table Person;
 CREATE TABLE Person(
     personId        SMALLINT,               CONSTRAINT person_pk PRIMARY KEY (personId),
     title           CHAR(50) DEFAULT NULL,  CONSTRAINT person_title CHECK (title IN ('Mr', 'Ms', 'Miss', 'Dr', 'Prof')),
-    personName      VARCHAR2(50),
-    institution     VARCHAR2(100),
-    country         VARCHAR2(30),
+    personName      VARCHAR2(50)  NOT NULL,
+    institution     VARCHAR2(100) NOT NULL,
+    country         VARCHAR2(30)  NOT NULL,
     -- TODO : PHONENO SHOULD BE 8 TO 15 DIGITS ONLY, WHETHER CAN BE INSERTED LETTER OR NOT
-    phoneNo         VARCHAR2(15),           CONSTRAINT person_phone CHECK (phoneNo BETWEEN 10000000 AND 999999999999999),
-    personEmail     VARCHAR2(50),           CONSTRAINT person_email UNIQUE (personEmail)    
+    phoneNo         VARCHAR2(15)  NOT NULL, CONSTRAINT person_phone CHECK (phoneNo BETWEEN 10000000 AND 999999999999999),
+    personEmail     VARCHAR2(50)  NOT NULL, CONSTRAINT person_email UNIQUE (personEmail)    
     );
     
     
@@ -43,9 +43,9 @@ CREATE TABLE Submission(
     submissionNo    INT,     
     CONSTRAINT submission_pk PRIMARY KEY (submissionNo),
     
-    title           VARCHAR2(50),   
-    abstract        VARCHAR2(300),  
-    submissionType  VARCHAR2(20) DEFAULT 'research', 
+    title           VARCHAR2(50)  NOT NULL,   
+    abstract        VARCHAR2(300) NOT NULL,  
+    submissionType  VARCHAR2(20) DEFAULT 'research' NOT NULL, 
     CONSTRAINT submission_type CHECK (submissionType IN ('research', 'demo', 'industrial')),
     
     decision        VARCHAR2(6) DEFAULT NULL, 
@@ -77,10 +77,10 @@ CREATE TABLE AssignedTo(
     
 CREATE TABLE PreferenceFor(
     -- TODO : CHECK THE REFERENTIAL INTEGRITY ACTION FOR RELATIONSHIP ENTITY
-    pcCode          CHAR(4),    CONSTRAINT pref_fk FOREIGN KEY (pcCode) REFERENCES PCMember(pcCode) ON DELETE CASCADE,
-    submissionNo    SMALLINT,   CONSTRAINT pref_fk2 FOREIGN KEY (submissionNo) REFERENCES Submission(submissionNo) ON DELETE CASCADE,
+    pcCode          CHAR(4),            CONSTRAINT pref_fk FOREIGN KEY (pcCode) REFERENCES PCMember(pcCode) ON DELETE CASCADE,
+    submissionNo    SMALLINT,           CONSTRAINT pref_fk2 FOREIGN KEY (submissionNo) REFERENCES Submission(submissionNo) ON DELETE CASCADE,
     CONSTRAINT pref_pk PRIMARY KEY (pcCode, submissionNo),
-    preference      SMALLINT,   CONSTRAINT pref_ CHECK (preference BETWEEN 1 AND 5)
+    preference      SMALLINT NOT NULL,   CONSTRAINT pref_ CHECK (preference BETWEEN 1 AND 5)
     );
     
     
@@ -88,21 +88,21 @@ CREATE TABLE RefereeReport(
     pcCode          CHAR(4),    CONSTRAINT report_fk FOREIGN KEY (pcCode) REFERENCES PCMember(pcCode) ON DELETE CASCADE,
     submissionNo    SMALLINT,   CONSTRAINT report_fk2 FOREIGN KEY (submissionNo) REFERENCES Submission(submissionNo) ON DELETE CASCADE,
     CONSTRAINT report_pk PRIMARY KEY (pcCode, submissionNo),
-    relevant        CHAR(1),    CONSTRAINT report_relevant CHECK (relevant IN ('Y', 'N', 'M')),
-    technicallyCorrect  CHAR(1),CONSTRAINT report_technical CHECK (technicallyCorrect IN ('Y', 'N', 'M')),
+    relevant        CHAR(1) NOT NULL,    CONSTRAINT report_relevant CHECK (relevant IN ('Y', 'N', 'M')),
+    technicallyCorrect  CHAR(1) NOT NULL,CONSTRAINT report_technical CHECK (technicallyCorrect IN ('Y', 'N', 'M')),
     lengthAndContent    CHAR(1),CONSTRAINT report_lnc CHECK (lengthAndContent IN ('Y', 'N', 'M')),
-    originality     SMALLINT,   CONSTRAINT report_original CHECK (originality BETWEEN 1 AND 5),
-    impact          SMALLINT,   CONSTRAINT report_impact CHECK (impact BETWEEN 1 AND 5),
-    presentation    SMALLINT,   CONSTRAINT report_presentation CHECK (presentation BETWEEN 1 AND 5),
-    technicalDepth  SMALLINT,   CONSTRAINT report_depth CHECK (technicalDepth BETWEEN 1 AND 5),
-    overallRating   SMALLINT,   CONSTRAINT report_rating CHECK (overallRating BETWEEN 1 AND 5),
-    confidence      NUMBER(2,1),CONSTRAINT report_confiedence CHECK (confidence BETWEEN 0.5 AND 1),
-    mainContribution    VARCHAR2(300),
-    strongPoints    VARCHAR2(300),
-    weakPoints      VARCHAR2(300),
-    overallSummary  VARCHAR2(300),
-    detailedComments    VARCHAR2(1000),
-    confidentialComments VARCHAR2(300)
+    originality     SMALLINT NOT NULL,   CONSTRAINT report_original CHECK (originality BETWEEN 1 AND 5),
+    impact          SMALLINT NOT NULL,   CONSTRAINT report_impact CHECK (impact BETWEEN 1 AND 5),
+    presentation    SMALLINT NOT NULL,   CONSTRAINT report_presentation CHECK (presentation BETWEEN 1 AND 5),
+    technicalDepth  SMALLINT NOT NULL,   CONSTRAINT report_depth CHECK (technicalDepth BETWEEN 1 AND 5),
+    overallRating   SMALLINT NOT NULL,   CONSTRAINT report_rating CHECK (overallRating BETWEEN 1 AND 5),
+    confidence      NUMBER(2,1) NOT NULL,CONSTRAINT report_confiedence CHECK (confidence BETWEEN 0.5 AND 1),
+    mainContribution    VARCHAR2(300) NOT NULL,
+    strongPoints    VARCHAR2(300) NOT NULL,
+    weakPoints      VARCHAR2(300) NOT NULL,
+    overallSummary  VARCHAR2(300) NOT NULL,
+    detailedComments    VARCHAR2(1000) NOT NULL,
+    confidentialComments VARCHAR2(300) NOT NULL
     );
 
 
@@ -111,7 +111,7 @@ CREATE TABLE Discussion(
     submissionNo    SMALLINT,   CONSTRAINT discussion_fk FOREIGN KEY (submissionNo) REFERENCES Submission(submissionNo) ON DELETE CASCADE,
     pcCode          CHAR(4),    CONSTRAINT discussion_fk2 FOREIGN KEY (pcCode) REFERENCES PCMember(pcCode) ON DELETE CASCADE,
     CONSTRAINT discussion_pk PRIMARY KEY (sequenceNo, submissionNo, pcCode),
-    comments        VARCHAR2(200)
+    comments        VARCHAR2(200) NOT NULL
     );
 
 COMMIT;
