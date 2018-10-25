@@ -51,30 +51,37 @@ ORDER BY S.submissionNo
     result first by PC member name in ascending order and then by prefe rence for a
     submission in descending order
 */
-WITH temp (pcCode) AS (
+WITH preferredTemp (pcCode) AS (
     SELECT      PC.pcCode
-    FROM        (SELECT * FROM PreferenceFor WHERE preference >= 3) C
-                    RIGHT OUTER JOIN PCMember PC ON PC.pcCode = C.pcCode
+    FROM        (   SELECT * FROM PreferenceFor 
+                    WHERE preference >= 3 ) C
+                RIGHT OUTER JOIN 
+                PCMember PC ON PC.pcCode = C.pcCode
     GROUP BY    PC.pcCode
     HAVING      COUNT(C.pcCode) < 2 )
-SELECT      P.personName, PF.submissionNo, S.title, preference
-FROM        temp T, Person P, PCMember PM, Submission S, PreferenceFor PF
-WHERE       T.pcCode = PM.pcCode AND PM.personId = P.personId AND 
-            T.pcCode = PF.pcCode AND preference >= 3 AND PF.submissionNo = S.submissionNo
-ORDER BY    P.personName ASC, preference DESC
+SELECT      personName, submissionNo, title, preference
+FROM        (   SELECT T.pcCode AS pcCode, P.personName AS personName
+                FROM preferredTemp T, Person P, PCMember PC
+                WHERE T.pcCode = PC.pcCode AND PC.personId = P.personId ) Pers
+            LEFT OUTER JOIN 
+            (   SELECT pcCode, PF.submissionNo AS submissionNo, title, preference
+                FROM PreferenceFor PF, Submission S
+                WHERE PF.submissionNo = S.submissionNo AND preference >= 3 ) Subm
+            ON Pers.pcCode = Subm.pcCode
+ORDER BY personName ASC, preference DESC
 ;
 
 
 /*
     For each submission that has at least three reviews, find the submission number, title, 
-        submission type, PC member names, overall ratings and spread where the spread is 1 or greater.
-        Order the result by submission number
+        submission type, PC member names, overall ratings and spread where the spread is 1
+        or greater. Order the result by submission number
 */
 WITH temp (submissionNo, spread) AS (
-    SELECT submissionNo, max(overallRating) - min(overallRating)
-    FROM RefereeReport
-    GROUP BY submissionNo
-    HAVING COUNT (*) > 3 AND max(overallRating)-min(overallRating) >= 1)
+    SELECT      submissionNo, max(overallRating) - min(overallRating)
+    FROM        RefereeReport
+    GROUP BY    submissionNo
+    HAVING      COUNT (*) >= 3 AND max(overallRating)-min(overallRating) >= 1 )
 SELECT  T.submissionNo, S.title, submissionType, P.personName, overallRating, spread
 FROM    temp T, RefereeReport R, Submission S, PCMember PM, Person P
 WHERE   S.submissionNo = T.submissionNo AND T.submissionNo = R.submissionNo AND
