@@ -234,5 +234,3 @@ select * from AssignedTo;
 select * from PreferenceFor;
 select * from RefereeReport;
 select * from Discussion;
-
-COMMIT;

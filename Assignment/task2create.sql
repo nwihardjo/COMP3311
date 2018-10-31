@@ -102,7 +102,7 @@ CREATE TABLE RefereeReport(
     weakPoints      VARCHAR2(300) NOT NULL,
     overallSummary  VARCHAR2(300) NOT NULL,
     detailedComments    VARCHAR2(1000) NOT NULL,
-    confidentialComments VARCHAR2(300) NOT NULL
+    confidentialComments VARCHAR2(300)
     );
 
 

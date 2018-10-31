@@ -48,7 +48,7 @@ ORDER BY S.submissionNo
     For those PC members who have indicated a preference of 3 or greater for less than 
     2 submissions, find the PC member name as well as the submission number, title and
     preference of the submission for which they have indicated a preference. Order the
-    result first by PC member name in ascending order and then by prefe rence for a
+    result first by PC member name in ascending order and then by preference for a
     submission in descending order
 */
 WITH preferredTemp (pcCode) AS (
