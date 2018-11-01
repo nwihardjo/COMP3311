@@ -1,14 +1,11 @@
 --NATHANIEL WIHARDJO (20315011)
 
--- TODO : DELETE FOLLOWING LINE UPON SUBMISSION
-@task2_dropconstraint
-
 drop table RefereeReport;
 drop table Discussion;
 drop table AssignedTo;
 drop table PreferenceFor;
-drop table Submission;
 drop table Author;
+drop table Submission;
 drop table PCChair;
 drop table PCMember;
 drop table Person;
@@ -20,8 +17,7 @@ CREATE TABLE Person(
     personName      VARCHAR2(50)  NOT NULL,
     institution     VARCHAR2(100) NOT NULL,
     country         VARCHAR2(30)  NOT NULL,
-    -- TODO : PHONENO SHOULD BE 8 TO 15 DIGITS ONLY, WHETHER CAN BE INSERTED LETTER OR NOT
-    phoneNo         VARCHAR2(15)  NOT NULL, CONSTRAINT person_phone CHECK (phoneNo BETWEEN 10000000 AND 999999999999999),
+    phoneNo         VARCHAR2(15)  NOT NULL, CONSTRAINT person_phone CHECK (REGEXP_LIKE(phoneNo, '^[0-9]{8,15}$')),
     personEmail     VARCHAR2(50)  NOT NULL, CONSTRAINT person_email UNIQUE (personEmail)    
     );
     
@@ -40,7 +36,7 @@ CREATE TABLE PCChair(
     
 
 CREATE TABLE Submission(
-    submissionNo    INT,     
+    submissionNo    INT,     CONSTRAINT pk_check CHECK (submissionNo > 0),
     CONSTRAINT submission_pk PRIMARY KEY (submissionNo),
     
     title           VARCHAR2(50)  NOT NULL,   
@@ -50,9 +46,7 @@ CREATE TABLE Submission(
     
     decision        VARCHAR2(6) DEFAULT NULL, 
     CONSTRAINT submission_decision CHECK (decision IN ('accept', 'reject')),
-    
-    -- BELOW ATTRIBUTE FOR HASCONTACT
-    -- TODO : CHECK WHETHER THE FOREIGN KEY CONSTRAINT IS CORRECT
+
     contactAuthor   SMALLINT NOT NULL, 
     CONSTRAINT submission_fk FOREIGN KEY (contactAuthor) REFERENCES Person(personId) ON DELETE CASCADE
     );
@@ -61,14 +55,11 @@ CREATE TABLE Submission(
 CREATE TABLE Author(
     personId        SMALLINT NOT NULL,   CONSTRAINT author_fk FOREIGN KEY (personId) REFERENCES Person(personId) ON DELETE CASCADE,
     submissionNo    SMALLINT NOT NULL,   CONSTRAINT author_fk2 FOREIGN KEY (submissionNo) REFERENCES Submission(submissionNo) ON DELETE CASCADE,
-    -- TODO : CHECK WHICH RELATION OF BELOW ATTRIBUTES (HASAUTHOR / HASCONTACT) OF DELETE
-    -- "EVERY AUTHOR HAS TO AT LEAST AUTHOR ONE"   
     CONSTRAINT author_pk PRIMARY KEY (personid, submissionNo)
     );    
 
 
 CREATE TABLE AssignedTo(
-    -- TODO : CHECK THE REFERENTIAL INTEGRITY ACTION FOR RELATIONSHIP ENTITY
     pcCode          CHAR(4) NOT NULL,    CONSTRAINT assign_fk FOREIGN KEY (pcCode) REFERENCES PCMember(pcCode) ON DELETE CASCADE,
     submissionNo    SMALLINT NOT NULL,   CONSTRAINT assign_fk2 FOREIGN KEY (submissionNo) REFERENCES Submission(submissionNo) ON DELETE CASCADE,
     CONSTRAINT assign_pk PRIMARY KEY (pcCode, submissionNo)
@@ -76,7 +67,6 @@ CREATE TABLE AssignedTo(
     
     
 CREATE TABLE PreferenceFor(
-    -- TODO : CHECK THE REFERENTIAL INTEGRITY ACTION FOR RELATIONSHIP ENTITY
     pcCode          CHAR(4) NOT NULL,            CONSTRAINT pref_fk FOREIGN KEY (pcCode) REFERENCES PCMember(pcCode) ON DELETE CASCADE,
     submissionNo    SMALLINT NOT NULL,           CONSTRAINT pref_fk2 FOREIGN KEY (submissionNo) REFERENCES Submission(submissionNo) ON DELETE CASCADE,
     CONSTRAINT pref_pk PRIMARY KEY (pcCode, submissionNo),
@@ -107,9 +97,9 @@ CREATE TABLE RefereeReport(
 
 
 CREATE TABLE Discussion(
-    sequenceNo      SMALLINT NOT NULL,
-    submissionNo    SMALLINT NOT NULL,   CONSTRAINT discussion_fk FOREIGN KEY (submissionNo) REFERENCES Submission(submissionNo) ON DELETE CASCADE,
-    pcCode          CHAR(4) NOT NULL,    CONSTRAINT discussion_fk2 FOREIGN KEY (pcCode) REFERENCES PCMember(pcCode) ON DELETE CASCADE,
+    sequenceNo      SMALLINT NOT NULL,  CONSTRAINT pk_check_ CHECK (sequenceNo > 0),
+    submissionNo    SMALLINT NOT NULL,  CONSTRAINT discussion_fk FOREIGN KEY (submissionNo) REFERENCES Submission(submissionNo) ON DELETE CASCADE,
+    pcCode          CHAR(4) NOT NULL,   CONSTRAINT discussion_fk2 FOREIGN KEY (pcCode) REFERENCES PCMember(pcCode) ON DELETE CASCADE,
     CONSTRAINT discussion_pk PRIMARY KEY (sequenceNo, submissionNo, pcCode),
     comments        VARCHAR2(200) NOT NULL
     );

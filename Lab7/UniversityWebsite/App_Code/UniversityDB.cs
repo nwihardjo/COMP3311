@@ -1,4 +1,5 @@
-﻿using Oracle.DataAccess.Client;
+﻿// Nathaniel Wihardjo (20315011)
+using Oracle.DataAccess.Client;
 using System.Data;
 
 /// <summary>
@@ -30,7 +31,7 @@ public class UniversityDB
         // Determine if the student id exists in the database.              *
         // Returns 0 - does not exist; 1 - exists; -1 - SQL error.          *
         //*******************************************************************
-        sql = "";
+        sql = "select count(*) from Student where studentId='" + studentId + "'";
         return myOracleDBAccess.GetAggregateValue(sql);
     }
 
@@ -41,7 +42,8 @@ public class UniversityDB
         // Construct the SELECT statement to find the id, last name, first name  *
         // and cga of the students in a department identified by a departmentId. *
         //************************************************************************
-        sql = "";
+        sql = "select studentId, lastName, firstName, CGA from Student where departmentId='"
+            + departmentId + "'";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -52,7 +54,7 @@ public class UniversityDB
         // Construct the SELECT statement to retrieve the *
         // department id and name of all departments.     *
         //*************************************************
-        sql = "";
+        sql = "select departmentId, departmentName from Department";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -66,7 +68,8 @@ public class UniversityDB
         // Construct the SELECT statement to find the id, name, credits and instructor *
         // of the courses in which a student, identified by a studentiId, is enrolled. *
         //******************************************************************************
-        sql = "";
+        sql = "select E.courseId, courseName, credits, instructor from EnrollsIn E, Course C " +
+            "where E.courseId=C.courseId and studentId='" + studentId + "'";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -77,7 +80,10 @@ public class UniversityDB
         // Construct the SELECT statement to find the id, name, credits and instructor of *
         // the courses that a student, identified by a studentiId, is NOT enrolled in.    *
         //*********************************************************************************
-        sql = "";
+        sql = "with temp (courseId) as ((select courseId from Course) minus "+
+            "(select courseId from EnrollsIn where studentId='"+studentId+"')) "+
+            "select T.courseId, courseName, credits, instructor from temp T, Course C "+
+            "where T.courseId = C.courseId";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -87,7 +93,7 @@ public class UniversityDB
         // TODO 7: Used in EnrollInCourses.aspx.cs                                         *
         // Construct the INSERT statement to enroll a student in his/her selected courses. *
         //**********************************************************************************
-        sql = "";
+        sql = "insert into EnrollsIn values ('"+studentId+"', '"+courseId+"',null)";
         return UpdateData(sql);
     }
 

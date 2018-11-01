@@ -71,7 +71,7 @@ insert into Student values ('15678989','Maria','Callas','cs_callas','23589876',2
 insert into Student values ('15678901','Albert','Einstein','cs_einstein','23585678',2.56,'COMP','2014');
 insert into Student values ('16789012','Robert','Redford','ma_redford','23582468',2.57,'MATH','2015');
 insert into Student values ('14567890','Julius','Caesar','ee_caesar','23589876',1.9,'ELEC','2015');
-insert into Student values ('99987654','Lazzy','Lazy','lz_lazy','23581357',null,'COMP','2015');
+insert into Student values ('99987654','Lazzy','Lazy','lz_lazy','23581357',1.67,'COMP','2015');
 insert into Student values ('26184624','Bruce','Wayne','ee_wayne','28261057',2.48,'ELEC','2014');
 insert into Student values ('26184444','Donald','Trump','bs_trump','28255057',1.49,'BUS','2016');
 insert into Student values ('26186666','Warren','Buffet','bs_buffet','28266027',3.42,'BUS','2015');
