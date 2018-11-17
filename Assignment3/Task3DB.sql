@@ -29,8 +29,8 @@ create table Submission (
 	submissionNo    int primary key,
 	title           varchar2(50) not null,
     abstract        varchar2(300) not null,
-	submissionType  varchar2(20) default 'research' not null check (submissionType in ('research', 'demo', 'industrial')),
-	decision        varchar2(6) check (decision in ('accept', 'reject', null)),
+	submissionType  varchar2(20) default 'research' not null check (submissionType in ('research', 'demo', 'industrial', 'vision')),
+	decision        varchar2(6) check (decision in ('accept', 'reject')),
     contactAuthor   int references Person(personId) on delete cascade);
 
 create table AssignedTo (
