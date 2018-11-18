@@ -8,9 +8,9 @@
 //*************************************************************************
 VAR: pcCode
 */
-SELECT COUNT (DISTINCT personId)
+SELECT COUNT(personId)
 FROM PCMember 
-WHERE pcCode = pcCode;
+WHERE pcCode = 'pcCode';
 
 /********************************************************************
 // TODO 02: Used in CreateSubmission.aspx.cs, CreatePCMember.aspx.cs *
@@ -19,7 +19,7 @@ WHERE pcCode = pcCode;
 //********************************************************************
 */
 INSERT INTO Person 
-VALUES (personId, title, personName, institution, phoneNo, personEmail);
+VALUES ('personId', 'title', 'personName', 'institution', 'phoneNo', 'personEmail');
 
 /*******************************************************
 // TODO 03: Used in EditPCMemberInfo.aspx.cs            *
@@ -28,9 +28,9 @@ VALUES (personId, title, personName, institution, phoneNo, personEmail);
 //*******************************************************
 */
 UPDATE Person
-SET title = title, personName = personName, institution = institution, country = country,
-    phoneNo = phoneNo, personEmail = personEmail
-WHERE personId = personId;
+SET title = 'title', personName = 'personName', institution = 'institution', country = 'country',
+    phoneNo = 'phoneNo', personEmail = 'personEmail'
+WHERE personId = 'personId';
 
 /*******************************************************
 // TODO 04: Used in CreateSubmission.aspx.cs            *
@@ -39,9 +39,8 @@ WHERE personId = personId;
 //*******************************************************
 */
 INSERT INTO Submission
-VALUES (submissionNo, submissionTitle, submissionAbstract, submissionType, decision,
-    contactAuthor);
-
+VALUES ('submissionNo', 'submissionTitle', 'submissionAbstract', 'submissionType', 'decision',
+    'contactAuthor');
 /****************************************************
 // TODO 05: Used in CreateSubmission.aspx.cs         *
 // Construct the SQL INSERT statement to insert a    *
@@ -49,7 +48,7 @@ VALUES (submissionNo, submissionTitle, submissionAbstract, submissionType, decis
 //****************************************************
 */
 INSERT INTO Author
-VALUES (personId, submissionNo);
+VALUES ('personId', 'submissionNo');
 
 /*********************************************************************************
 // TODO 06: Used in FindAllAuthorSubmissions.aspx.cs                              *
@@ -59,10 +58,10 @@ VALUES (personId, submissionNo);
 //*********************************************************************************
 VAR: email
 */
-SELECT      submissionNo, title, abstract, submissionType
+SELECT      S.submissionNo, S.title, abstract, submissionType
 FROM        Author A, Submission S, Person P
-WHERE       email = email AND P.personId = A.personId AND A.submissionNo = S.submissionNo
-ORDER BY    submissionNo;
+WHERE       personEmail = 'email' AND P.personId = A.personId AND A.submissionNo = S.submissionNo
+ORDER BY    S.submissionNo;
 
 /**************************************************************************
 // TODO 07: Used in FindAllAuthorSubmissions.aspx.cs                       *
@@ -71,11 +70,10 @@ ORDER BY    submissionNo;
 // the person is not an author and 1 if he/she is an author.               *
 //**************************************************************************
 VAR: email
-TODO: check whether count distinct null return 0
 */
 SELECT COUNT (DISTINCT A.personId)
 FROM Person P LEFT OUTER JOIN Author A ON P.personId = A.personId
-WHERE email = email;
+WHERE personEmail = 'email';
 
 /*******************************************************************************
 // TODO 08: Used in FindSubmission.aspx.cs                                      *
@@ -87,10 +85,9 @@ WHERE email = email;
 //*******************************************************************************
 VAR: submissionNo
 */
-SELECT
-FROM Submission S, Person P, Author A
-WHERE S.submissionNo = submissionNo AND A.submissionNo = S.submissionNo AND
-    A.personId = P.personId
+SELECT P.title, personName, institution, country, phoneNo, personEmail, contactAuthor 
+FROM Author A LEFT OUTER JOIN Submission S ON A.personId = S.contactAuthor AND A.submissionNo = S.submissionNo, Person P
+WHERE A.submissionNo = 'submissionNo' AND A.personId = P.personId;
     
 
 /*************************************************************************
@@ -102,7 +99,7 @@ VAR: submissionNumber
 */
 SELECT title, abstract, submissionType
 FROM Submission
-WHERE submissionNo = submissionNumber;
+WHERE submissionNo = 'submissionNumber';
 
 /******************************************************
 // TODO 10: Used in AssignSubmissionToPCMember.aspx.cs *
@@ -123,7 +120,7 @@ VAR: submissionNo
 */
 SELECT title
 FROM Submission
-WHERE submissionNo = submissionNo;
+WHERE submissionNo = 'submissionNo';
 
 /********************************************************************
 // TODO 12: Used in AssignSubmissionToPCMember.aspx.cs               *
@@ -133,10 +130,10 @@ WHERE submissionNo = submissionNo;
 //********************************************************************
 VAR: submissionNo
 */
-SELECT pcCode, personName
+SELECT A.pcCode, personName
 FROM AssignedTo A, Person P, PCMember PC
-WHERE A.submissionNo = submissionNo AND A.pcCode = PC.pcCode AND PC.personId = P.personId
-ORDER BY pcCode;
+WHERE A.submissionNo = 'submissionNo' AND A.pcCode = PC.pcCode AND PC.personId = P.personId
+ORDER BY A.pcCode;
 
 /**********************************************************************************
 // TODO 13: Used in AssignSubmissionToPCMember.aspx.cs                             *
@@ -148,9 +145,22 @@ ORDER BY pcCode;
 //**********************************************************************************
 VAR: submissionNo, preference
 */
+-- DOUBLE CHECK
 SELECT pcCode, preference
 FROM PreferenceFor
-WHERE submissionNo = submissionNo AND preference >= preference;
+WHERE submissionNo = 'submissionNo' AND preference >= 'preference';
+
+/***********************************************************************************************
+// TODO 14: Used in AssignSubmissionToPCMember.aspx.cs                                          *
+// Construct the SQL SELECT statement to retrieve the PC code, the preference for a submission, *
+// identified by a submission number, set as null and the number of submissions to which he/she *
+// is already assigned for the PC members available for assignment to the submission WHO HAVE   *
+// NOT SPECIFIED ANY PREFERENCE for the submission. Order the result by PC code.                *
+//***********************************************************************************************
+VAR: submissionNo
+*/
+-- DOUBLE CHECK
+
 
 /***********************************************************************************
 // TODO 15: Used in AssignSubmissionToPCMember.aspx.cs                              *
@@ -159,7 +169,7 @@ WHERE submissionNo = submissionNo AND preference >= preference;
 VAR: pcCode, submissionNo
 */
 INSERT INTO AssignedTo
-VALUES (pcCode, submissionNo);
+VALUES ('pcCode', 'submissionNo');
 
 /****************************************************************************************
 // TODO 16: Used in CreatePCMember.aspx.cs                                               *
@@ -168,7 +178,7 @@ VALUES (pcCode, submissionNo);
 VAR: personId, title, personName, institution, country, phoneNo, personEmail, pcCode
 */
 INSERT INTO PCMember
-VALUES (pcCode, personId);
+VALUES ('pcCode', 'personId');
 
 /************************************************************************
 // TODO 17: Used in DisplayPCMemberInfo.aspx.cs                          *
@@ -178,7 +188,7 @@ VALUES (pcCode, personId);
 //************************************************************************
 */
 SELECT pcCode, title, personName, institution, country, phoneNo, personEmail
-FROM PCMember PC NATURAL JOIN Person P ON PC.personId = P.personId
+FROM PCMember NATURAL JOIN Person 
 ORDER BY pcCode;
 
 /*********************************************************
@@ -189,8 +199,8 @@ ORDER BY pcCode;
 VAR: pcCode
 */
 SELECT pcCode, title, personName, institution, country, phoneNo, personEmail
-FROM PCMember PC NATURAL JOIN Person P ON PC.personId = P.personId
-WHERE pcCode = pcCode
+FROM PCMember NATURAL JOIN Person
+WHERE pcCode = 'pcCode'
 ORDER BY pcCode;
 
 /*************************************************************************
@@ -203,8 +213,8 @@ ORDER BY pcCode;
 VAR: pcCode
 */
 SELECT submissionNo
-FROM AssignedTo A
-WHERE pcCode = pcCode AND pcCode, submissionNo NOT IN (
+FROM AssignedTo
+WHERE pcCode = 'pcCode' AND (pcCode, submissionNo) NOT IN (
     SELECT pcCode, submissionNo FROM RefereeReport )
 ORDER BY submissionNo;
 
@@ -216,8 +226,8 @@ ORDER BY submissionNo;
 VAR: submissionNumber
 */
 SELECT personName
-FROM Author A NATURAL JOIN Person P ON A.personId = P.personId
-WHERE submissionNo = submissionNumber
+FROM Author NATURAL JOIN Person
+WHERE submissionNo = 'submissionNumber'
 ORDER BY personName;
 
 /*********************************************************************************
@@ -230,9 +240,10 @@ VAR: pcCode, submissionNumber, relevant, technicallyCorrect, lengthAndContent, o
     confidentialComments
 */
 INSERT INTO RefereeReport
-VALUES (pcCode, submissionNumber, relevant, technicallyCorrect, lengthAndContent, originality, impact, presentation,
-    technicalDepth, overallRating, confidence, mainContribution, strongPoints, weakPoints, overallSummary, 
-    detailedComments, confidentialComments);
+VALUES ('pcCode', 'submissionNumber', 'relevant', 'technicallyCorrect', 'lengthAndContent', 
+    'originality', 'impact', 'presentation', 'technicalDepth', 'overallRating', 'confidence', 
+    'mainContribution', 'strongPoints', 'weakPoints', 'overallSummary', 'detailedComments', 
+    'confidentialComments');
 
 /********************************************************************
 // TODO 22: Used in DisplayRefereeReport.aspx.cs                     *
@@ -244,7 +255,7 @@ VAR: pcCode, submissionNumber
 */
 SELECT * 
 FROM RefereeReport
-WHERE pcCode = pcCode AND submissionNo = submissionNumber;
+WHERE pcCode = 'pcCode' AND submissionNo = 'submissionNumber';
 
 /*********************************************************************
 // TODO 23: Used in DisplayRefereeReport.aspx.cs                      *
@@ -256,7 +267,7 @@ VAR: submissionNumber
 */
 SELECT pcCode, comments
 FROM Discussion
-WHERE submissionNo = submissionNumber
+WHERE submissionNo = 'submissionNumber'
 ORDER BY sequenceNo ASC;
 
 /************************************************************************
@@ -269,7 +280,7 @@ VAR: pcCode
 */
 SELECT submissionNo
 FROM RefereeReport
-WHERE pcCode = pcCode
+WHERE pcCode = 'pcCode'
 ORDER BY submissionNo;
 
 /****************************************************
@@ -280,7 +291,7 @@ ORDER BY submissionNo;
 VAR: sequenceNumber, pcCode, submissionNo, comments
 */
 INSERT INTO Discussion
-VALUES (sequenceNumber, pcCode, submissionNo, comments);
+VALUES ('sequenceNumber', 'pcCode', 'submissionNo', 'comments');
 
 /************************************************************************
 // TODO 26: Used in DisplayReviewingStatus.aspx.cs                  *
@@ -292,5 +303,68 @@ VALUES (sequenceNumber, pcCode, submissionNo, comments);
 //************************************************************************
 VAR: pcCode
 */
+SELECT submissionNo, title, abstract, submissionType
+FROM AssignedTo A NATURAL JOIN Submission S 
+WHERE pcCode = 'pcCode' AND (pcCode, submissionNo) IN (
+    SELECT pcCode, submissionNo
+    FROM RefereeReport )
+ORDER BY submissionNo;
 
+/************************************************************************
+// TODO 27: Used in DisplayReviewingStatus.aspx.cs                  *
+// Construct the SQL SELECT statement to retrieve the submission number, *
+// title, abstract and submission type for the submissions that have     *
+// been assigned to a PC member, identified by a PC code for review and  *
+// for which the PC member HAS NOT SUBMITTED a referee report.           *
+// Order the result by submission number.                                *
+//************************************************************************
+VAR: pcCode
+*/
+SELECT submissionNo, title, abstract, submissionType
+FROM AssignedTo A NATURAL JOIN Submission S 
+WHERE pcCode = 'pcCode' AND (pcCode, submissionNo) NOT IN (
+    SELECT pcCode, submissionNo
+    FROM RefereeReport )
+ORDER BY submissionNo;
 
+/**************************************************************************
+// TODO 28:Used in DisplaySubmissionsAndPreferences.aspx.cs                *
+// Construct the SQL SELECT statement to retrieve the submission number,   *
+// title, abstract, submission type and preference for ONLY those          *
+// submissions for which a PC member, identified by a PC code, HAS ALREADY *
+// SPECIFIED A PREFERENCE. Order the result by submission number.          *
+//**************************************************************************
+VAR: pcCode
+*/
+SELECT submissionNo, title, abstract, submissionType, preference
+FROM PreferenceFor NATURAL JOIN Submission 
+WHERE pcCode = 'pcCode'
+ORDER BY submissionNo;
+
+/************************************************************************
+// TODO 29: Used in DisplaySubmissionsAndPreferences.aspx.cs             *
+// Construct the SQL SELECT statement to retrieve the submission number, *
+// title, abstract and submission type for ONLY those submissions for    *
+// which a PC member, identified by a PC code, HAS NOT SPECIFIED A       *
+// PREFERENCE. Order the result by submission number.                    *
+//************************************************************************
+VAR: pcCode
+*/
+SELECT submissionNo, title, abstract, submissionType
+FROM Submission 
+WHERE submissionNo NOT IN (
+    SELECT submissionNo
+    FROM PreferenceFor
+    WHERE pcCode = 'pcCode' )
+ORDER BY submissionNo;
+
+/*******************************************************************************
+// TODO 30: Used in DisplaySubmissionsAndPreferences.aspx.cs                    *
+// Construct the SQL INSERT statement to insert a preference for a PC member,   *
+// identified by a PC code and a submission, identified by a submission number. *
+//******************************************************************************
+VAR: pcCode, submissionNo, preference
+*/
+
+INSERT INTO PreferenceFor
+VALUES ('pcCode', 'submissionNo', 'preference');

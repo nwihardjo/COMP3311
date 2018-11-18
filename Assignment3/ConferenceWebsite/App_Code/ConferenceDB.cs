@@ -34,7 +34,7 @@ public class ConferenceDB
         // exists in the PCMember table. The SQL statement should return 0 if the *
         // PC code does not exist and 1 if it does exist.                         *
         //*************************************************************************
-        sql = "";
+        sql = "SELECT COUNT(personId) FROM PCMember WHERE pcCode = '" + pcCode + "'; ";
         return myOracleDBAccess.GetAggregateValue(sql);
     }
 
@@ -47,7 +47,9 @@ public class ConferenceDB
         // Construct the SQL INSERT statement to insert a value for all the  *
         // attributes of the Person table.                                   *
         //********************************************************************
-        sql = "";
+        sql = "INSERT INTO Person VALUES('" + personId + "', '" + title + "', '" + 
+            personName + "', '" + institution + "', '" + phoneNo + "', '" + 
+            personEmail + "'); ";
         if (!myOracleDBAccess.SetData(sql, trans)) { myOracleDBAccess.DisposeTransaction(trans); return false; }
         return true;
     }
@@ -60,7 +62,10 @@ public class ConferenceDB
         // Construct the SQL UPDATE statement to update all the *
         // attributes of a person identified by a person id.    *
         //*******************************************************
-        sql = "";
+        sql = "UPDATE Person SET title = '" + title + "', personName = '" + 
+            personName + "', institution = '" + institution + "', country = '" + 
+            country + "', phoneNo = '" + phoneNo + "', personEmail = '" + 
+            personEmail + "' WHERE personId = '" + personId + "'; ";
         return SetData(sql);
     }
 
@@ -93,7 +98,9 @@ public class ConferenceDB
         // Construct the SQL INSERT statement to insert a value *
         // for all the attributes of the Submission table.      *
         //*******************************************************
-        sql = "";
+        sql = "INSERT INTO Submission VALUES('" + submissionNo + "', '" + 
+            submissionTitle + "', '" + submissionAbstract + "', '" + submissionType + 
+            "', '" + decision + "', '" + contactAuthor + "'); ";
         if (!myOracleDBAccess.SetData(sql, trans)) { myOracleDBAccess.DisposeTransaction(trans); return false; }
 
         // Finally, create the author records for the submission.
@@ -116,7 +123,7 @@ public class ConferenceDB
         // Construct the SQL INSERT statement to insert a    *
         // value for all the attributes of the Author table. *
         //****************************************************
-        sql = "";
+        sql = "INSERT INTO Author VALUES('" + personId + "', '" + submissionNo + "'); ";
         if (!myOracleDBAccess.SetData(sql, trans)) { myOracleDBAccess.DisposeTransaction(trans); return false; }
         return true;
     }
@@ -129,7 +136,9 @@ public class ConferenceDB
         // abstract and submission type for all submissions on which a person, identified * 
         // by his/her email address, is an author. Order the result by submission number. *
         //*********************************************************************************
-        sql = "";
+        sql = "SELECT S.submissionNo, S.title, abstract, submissionType FROM Author A, " +
+            "Submission S, Person P WHERE personEmail = '" + email + "' AND P.personId " +
+            "= A.personId AND A.submissionNo = S.submissionNo ORDER BY S.submissionNo; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -142,7 +151,8 @@ public class ConferenceDB
         // the person is not an author and 1 if he/she is an author.               *
         //**************************************************************************
 
-        sql = "";
+        sql = "SELECT COUNT (DISTINCT A.personId) FROM Person P LEFT OUTER JOIN " + 
+            "Author A ON P.personId = A.personId WHERE personEmail = '" + email + "'; ";
         return myOracleDBAccess.GetAggregateValue(sql);
     }
 
@@ -156,7 +166,10 @@ public class ConferenceDB
         // the contact author person id; otherwise, if the author is not the contact    *
         // author, then retrieve null for the contact author person id .                *
         //*******************************************************************************
-        sql = "";
+        sql = "SELECT P.title, personName, institution, country, phoneNo, personEmail, " +
+            "contactAuthor FROM Author A LEFT OUTER JOIN Submission S ON A.personId = " + 
+            "S.contactAuthor AND A.submissionNo = S.submissionNo, Person P WHERE " + 
+            "A.submissionNo = '" + submissionNo + "' AND A.personId = P.personId;";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -167,7 +180,8 @@ public class ConferenceDB
         // Construct the SQL SELECT statement to retrieve the title, abstract     *
         // and submission type of a submission identified by a submission number. *
         //*************************************************************************
-        sql = "";
+        sql = "SELECT title, abstract, submissionType FROM Submission WHERE submissionNo " +
+            "= '" + submissionNumber + "'; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -182,7 +196,7 @@ public class ConferenceDB
         // Construct the SQL SELECT statement to retrieve the  *
         // submission numbers of all submissions.              *
         //******************************************************
-        sql = "";
+        sql = "SELECT DISTINCT submissionNo FROM Submission; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -194,7 +208,7 @@ public class ConferenceDB
         // Construct the SQL SELECT statement to retrieve the title of a submission *
         // identified by a submission number.                                       *
         //***************************************************************************
-        sql = "";
+        sql = "SELECT title FROM Submission WHERE submissionNo = '" + submissionNo + "'; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -206,7 +220,9 @@ public class ConferenceDB
         // member name of the PC members already assigned to a submission    *
         // identified by a submission number. Order the result by PC code.   *
         //********************************************************************
-        sql = "";
+        sql = "SELECT A.pcCode, personName FROM AssignedTo A, Person P, PCMember PC " +
+            "WHERE A.submissionNo = '" + submissionNo + "' AND A.pcCode = PC.pcCode " +
+            "AND PC.personId = P.personId ORDER BY A.pcCode; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -220,7 +236,8 @@ public class ConferenceDB
         // to the submission WHO HAVE SPECIFIED A PREFERENCE for the submission greater    * 
         // than or equal to a specified preference. Order the result by PC code.           *
         //**********************************************************************************
-        sql = "";
+        sql = "SELECT pcCode, preference FROM PreferenceFor WHERE submissionNo = '" + 
+            submissionNo + "' AND preference >= '" + preference + "'; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -243,7 +260,7 @@ public class ConferenceDB
         // TODO 15: Used in AssignSubmissionToPCMember.aspx.cs                              *
         // Construct the SQL INSERT statement to assign a PC member to review a submission. *
         //***********************************************************************************
-        sql = "";
+        sql = "INSERT INTO AssignedTo VALUES('" + pcCode + "', '" + submissionNo + "'); ";
         return SetData(sql);
     }
 
@@ -266,7 +283,7 @@ public class ConferenceDB
         // TODO 16: Used in CreatePCMember.aspx.cs                                               *
         // Construct the SQL statement to INSERT all the attribute values of the PCMember table. *
         //****************************************************************************************
-        sql = "";
+        sql = "INSERT INTO PCMember VALUES('" + pcCode + "', '" + personId + "'); ";
         if (!myOracleDBAccess.SetData(sql, trans))
         { myOracleDBAccess.DisposeTransaction(trans); return false; }
 
@@ -282,7 +299,8 @@ public class ConferenceDB
         // name, institution, country, phone number and email of all PC members. *
         // Order the result by PC code.                                          *
         //************************************************************************
-        sql = "";
+        sql = "SELECT pcCode, title, personName, institution, country, phoneNo, " + 
+            "personEmail FROM PCMember NATURAL JOIN Person ORDER BY pcCode; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -293,7 +311,9 @@ public class ConferenceDB
         // Construct the SQL SELECT statement to retrieve all the *
         // attributes of a PC member identified by a PC code.     *
         //*********************************************************
-        sql = "";
+        sql = "SELECT pcCode, title, personName, institution, country, phoneNo, " + 
+            "personEmail FROM PCMember NATURAL JOIN Person WHERE pcCode = '" + pcCode + 
+            "' ORDER BY pcCode; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -310,7 +330,9 @@ public class ConferenceDB
         // by a PC code, and for which the PC member HAS NOT submitted a referee  *
         // report. Order the result by submission number.                         *
         //*************************************************************************
-        sql = "";
+        sql = "SELECT submissionNo FROM AssignedTo WHERE pcCode = '" + pcCode + 
+            "' AND(pcCode, submissionNo) NOT IN ( SELECT pcCode, submissionNo FROM " + 
+            "RefereeReport) ORDER BY submissionNo; ";
 
         return myOracleDBAccess.GetData(sql);
     }
@@ -322,7 +344,8 @@ public class ConferenceDB
         // Construct the SQL SELECT statement to retrieve the names of the authors of * 
         // a submission identified by a submission number. Order the result by name.  *
         //*****************************************************************************
-        sql = "";
+        sql = "SELECT personName FROM Author NATURAL JOIN Person WHERE submissionNo = '" +
+            submissionNumber + "' ORDER BY personName; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -336,7 +359,13 @@ public class ConferenceDB
         // Construct the SQL INSERT statement to insert a referee report for a PC member, *
         // identified by a PC code, for a submission, identified by a submission number.  *
         //*********************************************************************************
-        sql = "";
+        sql = "INSERT INTO RefereeReport VALUES('" + pcCode + "', '" + submissionNumber + 
+            "', '" + relevant + "', '" + technicallyCorrect + "', '" + lengthAndContent +
+            "', '" + originality + "', '" + impact + "', '" + presentation + "', '" + 
+            technicalDepth + "', '" + overallRating + "', '" + confidence + "', '" + 
+            mainContribution + "', '" + strongPoints + "', '" + weakPoints + "', '" + 
+            overallSummary + "', '" + detailedComments + "', '" + confidentialComments + 
+            "'); ";
         return SetData(sql);
     }
 
@@ -348,7 +377,8 @@ public class ConferenceDB
         // for a referee report for a PC member, identified by a PC code and *
         // submission, identified by a submission number.                    *
         //********************************************************************
-        sql = "";
+        sql = "SELECT * FROM RefereeReport WHERE pcCode = '" + pcCode + 
+            "' AND submissionNo = '" + submissionNumber + "'; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -360,7 +390,8 @@ public class ConferenceDB
         // comments for a submission identified by a submission number.       *
         // Order the comments from earliest to latest.                        *
         //*********************************************************************
-        sql = "";
+        sql = "SELECT pcCode, comments FROM Discussion WHERE submissionNo = '" + 
+            submissionNumber + "' ORDER BY sequenceNo ASC; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -372,7 +403,8 @@ public class ConferenceDB
         // for which a PC member, identified by a PC code, has already submitted *
         // a referee report. Order the result by submission number.              *
         //************************************************************************
-        sql = "";
+        sql = "SELECT submissionNo FROM RefereeReport WHERE pcCode = '" + pcCode + 
+            "' ORDER BY submissionNo; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -383,7 +415,8 @@ public class ConferenceDB
         // Construct the SQL INSERT statement to insert      *
         // all the attribute values of the Discussion table. *
         //****************************************************
-        sql = "";
+        sql = "INSERT INTO Discussion VALUES('" + sequenceNumber + "', '" + pcCode + 
+            "', '" + submissionNo + "', '" + comments + "'); ";
         return SetData(sql);
     }
 
@@ -398,7 +431,10 @@ public class ConferenceDB
         // Order the result by submission number.                                *
         //************************************************************************
 
-        sql = "";
+        sql = "SELECT submissionNo, title, abstract, submissionType FROM AssignedTo A " + 
+            "NATURAL JOIN Submission S WHERE pcCode = '" + pcCode + "' AND(pcCode, " + 
+            "submissionNo) IN( SELECT pcCode, submissionNo FROM RefereeReport) ORDER " +
+            "BY submissionNo; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -413,7 +449,10 @@ public class ConferenceDB
         // Order the result by submission number.                                *
         //************************************************************************
 
-        sql = "";
+        sql = "SELECT submissionNo, title, abstract, submissionType FROM AssignedTo A " +
+            "NATURAL JOIN Submission S WHERE pcCode = '" + pcCode + "' AND(pcCode, " + 
+            "submissionNo) NOT IN ( SELECT pcCode, submissionNo FROM RefereeReport) " +
+            "ORDER BY submissionNo; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -426,7 +465,9 @@ public class ConferenceDB
         // submissions for which a PC member, identified by a PC code, HAS ALREADY *
         // SPECIFIED A PREFERENCE. Order the result by submission number.          *
         //**************************************************************************
-        sql = "";
+        sql = "SELECT submissionNo, title, abstract, submissionType, preference FROM " +
+            "PreferenceFor NATURAL JOIN Submission WHERE pcCode = '" + pcCode + "'ORDER" +
+            "BY submissionNo; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -439,7 +480,9 @@ public class ConferenceDB
         // which a PC member, identified by a PC code, HAS NOT SPECIFIED A       *
         // PREFERENCE. Order the result by submission number.                    *
         //************************************************************************
-        sql = "";
+        sql = "SELECT submissionNo, title, abstract, submissionType FROM Submission " +
+            "WHERE submissionNo NOT IN (SELECT submissionNo FROM PreferenceFor WHERE " +
+            "pcCode = '" + pcCode + "' ) ORDER BY submissionNo; ";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -450,7 +493,8 @@ public class ConferenceDB
         // Construct the SQL INSERT statement to insert a preference for a PC member,   *
         // identified by a PC code and a submission, identified by a submission number. *
         //*******************************************************************************
-        sql = "";
+        sql = "INSERT INTO PreferenceFor VALUES('" + pcCode + "', '" + submissionNo +
+            "', '" + preference + "'); ";
         return SetData(sql);
     }
 
