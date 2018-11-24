@@ -145,10 +145,15 @@ ORDER BY A.pcCode;
 //**********************************************************************************
 VAR: submissionNo, preference
 */
--- DOUBLE CHECK
-SELECT pcCode, preference
-FROM PreferenceFor
-WHERE submissionNo = 'submissionNo' AND preference >= 'preference';
+WITH temp AS (
+    SELECT pcCode, preference
+    FROM PreferenceFor P 
+    WHERE submissionNo = 'submissionNo' AND preference >= 'preference' AND 
+        pcCode NOT IN ( SELECT pcCode FROM AssignedTo WHERE submissionNo = 'submissionNo'))
+SELECT pcCode, preference, count(*)
+FROM temp NATURAL JOIN AssignedTo
+GROUP BY pcCode, preference
+ORDER BY pcCode;
 
 /***********************************************************************************************
 // TODO 14: Used in AssignSubmissionToPCMember.aspx.cs                                          *
@@ -159,7 +164,12 @@ WHERE submissionNo = 'submissionNo' AND preference >= 'preference';
 //***********************************************************************************************
 VAR: submissionNo
 */
--- DOUBLE CHECK
+SELECT P.pcCode, null, count(A.pcCode)
+FROM PCMember P LEFT OUTER JOIN AssignedTo A ON P.pcCode = A.pcCode
+WHERE P.pcCode NOT IN (SELECT pcCode FROM AssignedTo WHERE submissionNo = 'submissionNo') AND
+    P.pcCode NOT IN (SELECT pcCode from PreferenceFor WHERE submissionNo = 'submissionNo')
+GROUP BY P.pcCode, null
+ORDER BY P.pcCode;
 
 
 /***********************************************************************************

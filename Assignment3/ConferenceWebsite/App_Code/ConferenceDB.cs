@@ -236,8 +236,11 @@ public class ConferenceDB
         // to the submission WHO HAVE SPECIFIED A PREFERENCE for the submission greater    * 
         // than or equal to a specified preference. Order the result by PC code.           *
         //**********************************************************************************
-        sql = "SELECT pcCode, preference FROM PreferenceFor WHERE submissionNo = '" + 
-            submissionNo + "' AND preference >= '" + preference + "'; ";
+        sql = "WITH temp AS (SELECT pcCode, preference FROM PreferenceFor P WHERE " + 
+            "submissionNo = '" + submissionNo + "' AND preference >= '" + preference + 
+            "' AND pcCode NOT IN (SELECT pcCode FROM AssignedTo WHERE submissionNo = '" +
+            submissionNo + "')) SELECT pcCode, preference, count(*) FROM temp NATURAL " + 
+            "JOIN AssignedTo GROUP BY pcCode, preference ORDER BY pcCode;";
         return myOracleDBAccess.GetData(sql);
     }
 
@@ -250,7 +253,11 @@ public class ConferenceDB
         // is already assigned for the PC members available for assignment to the submission WHO HAVE   *
         // NOT SPECIFIED ANY PREFERENCE for the submission. Order the result by PC code.                *
         //***********************************************************************************************
-        sql = "";
+        sql = "SELECT P.pcCode, null, count(A.pcCode) FROM PCMember P LEFT OUTER JOIN " +
+            "AssignedTo A ON P.pcCode = A.pcCode WHERE P.pcCode NOT IN(SELECT pcCode " + 
+            "FROM AssignedTo WHERE submissionNo = '" + submissionNo + "') AND P.pcCode " +
+            "NOT IN(SELECT pcCode from PreferenceFor WHERE submissionNo = '" + submissionNo + 
+            "') GROUP BY P.pcCode, null ORDER BY P.pcCode; ";
         return myOracleDBAccess.GetData(sql);
     }
 
