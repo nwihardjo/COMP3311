@@ -19,7 +19,7 @@ WHERE pcCode = 'pcCode';
 //********************************************************************
 */
 INSERT INTO Person 
-VALUES ('personId', 'title', 'personName', 'institution', 'phoneNo', 'personEmail');
+VALUES ('personId', 'title', 'personName', 'institution', 'country', 'phoneNo', 'personEmail');
 
 /*******************************************************
 // TODO 03: Used in EditPCMemberInfo.aspx.cs            *
@@ -208,7 +208,7 @@ ORDER BY pcCode;
 //*********************************************************
 VAR: pcCode
 */
-SELECT pcCode, title, personName, institution, country, phoneNo, personEmail
+SELECT pcCode, personId, title, personName, institution, country, phoneNo, personEmail
 FROM PCMember NATURAL JOIN Person
 WHERE pcCode = 'pcCode'
 ORDER BY pcCode;
@@ -348,7 +348,7 @@ VAR: pcCode
 */
 SELECT submissionNo, title, abstract, submissionType, preference
 FROM PreferenceFor NATURAL JOIN Submission 
-WHERE pcCode = 'pcCode'
+WHERE pcCode = 'ec01'
 ORDER BY submissionNo;
 
 /************************************************************************
